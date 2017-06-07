@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "module": "system",
+        "noImplicitAny": true,
+        "outFile": "main.js",
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": false,
+        "target": "es6"
+    },
+
+    "include" : [
+        "src/**/*"
+    ]
+
+}
