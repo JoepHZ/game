@@ -1,7 +1,8 @@
-class FPSCounter
+class ScoreCounter
 {
     html : HTMLElement;
     fps : number;
+    score : number = 0;
 
     /**
      * @param scene The HTMLElement that representats the scene of the game
@@ -10,7 +11,7 @@ class FPSCounter
     {
         this.html = document.createElement("div");
         this.html.id = name;
-        this.html.className = "fps";
+        this.html.className = "score";
         scene.appendChild(this.html);
     }
 
@@ -21,7 +22,7 @@ class FPSCounter
      */
     public draw(interval: number) : void
     {
-        this.html.innerHTML = Math.round(1 / interval) + "fps";
+        this.html.innerHTML = "Score: " + this.score;
     }
 
 }

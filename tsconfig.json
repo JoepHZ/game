@@ -9,6 +9,20 @@
         "target": "es6"
     },
 
+    "files": [
+        "src/game.ts",
+        "src/listeners/keylistener.ts",
+        "src/listeners/mouselistener.ts",
+        "src/listeners/windowlistener.ts",
+        "src/math/vector.ts",
+        "src/coin.ts",
+        "src/bitcoin.ts",
+        "src/euro.ts",
+        "src/ball.ts",
+        "src/scorecounter.ts",
+        "src/spaceship.ts"
+    ],
+
     "include" : [
         "src/**/*"
     ]

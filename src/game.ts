@@ -9,14 +9,17 @@ class Game
     previousIterationStart = 0; //The time the previous iteration started
     intervalSeconds = 0;        // The calculated interval between the start of the last iteration and the current one
 
-    score : number = 0;
     balls : Array<Ball> = [];
+    coins : Array<Coin> = [];
+    maxCoins : number = 1;
+    gameover : boolean = false;
 
     window : WindowListener;
     keyboard : KeyListener;
+    mouse: MouseListener;
     
     scene : HTMLElement;
-    fps : FPSCounter;
+    scoreCounter : ScoreCounter;
     spaceship : Spaceship;
 
     /**
@@ -28,8 +31,9 @@ class Game
     {
         this.window = new WindowListener();
         this.keyboard = new KeyListener();
+        this.mouse = new MouseListener();
         this.scene = scene;
-        this.fps = new FPSCounter(scene, "fps1");
+        this.scoreCounter = new ScoreCounter(scene, "fps1");
         this.spaceship = new Spaceship(this, scene, "spaceship");
     }
 
@@ -52,12 +56,19 @@ class Game
             this.intervalSeconds = (loopStart - this.previousIterationStart) / 1000;
         }
         this.previousIterationStart = loopStart;
+        
         // The steps of the game loop
         this.listen(this.intervalSeconds);
         this.move(this.intervalSeconds);
         this.draw(this.intervalSeconds);
+        this.spawn(this.intervalSeconds);
+        this.checkVoid(this.intervalSeconds);
+        this.checkCollision(this.intervalSeconds);
+        this.checkScore(this.intervalSeconds);
+        this.garbageCollect(this.intervalSeconds);
         // compute the time to wait for the next iteration
         var diff = (window.performance.now() - loopStart);
+
         // set the timout for the next iteration
         setTimeout(this.animate, this.intervalSetting - diff);
     }
@@ -70,10 +81,6 @@ class Game
     private listen(interval: number) : void
     {
         this.window.listen(interval);
-        if(this.balls[0] != undefined){
-            console.log(this.balls[0].html);
-        }
-        console.log(this.keyboard.keyevents);
     }
 
     /**
@@ -84,10 +91,15 @@ class Game
     private move(interval: number) : void
     {
         this.spaceship.move(interval);
-        this.spaceship.shoot(interval)
+        this.spaceship.shoot(interval);
+
         this.balls.forEach(ball => {
-            ball.draw(interval);
+            ball.move(interval);
         });
+
+        this.coins.forEach(coin => {
+            coin.move(interval);
+        })
     }
 
     /**
@@ -98,10 +110,84 @@ class Game
     private draw(interval: number) : void
     {
         this.spaceship.draw(interval);
+        this.scoreCounter.draw(interval);
+
         this.balls.forEach(ball => {
             ball.draw(interval);
         });
-        this.fps.draw(interval);
+
+        this.coins.forEach(coin => {
+            coin.draw(interval);
+        })
     }
 
+    private spawn(interval: number) : void
+    {
+        if(this.coins.length < this.maxCoins){
+            if(Math.random() > 0.25){
+                if(Math.random() > 0.75){
+                    this.coins.push(new Bitcoin(this, this.scene, 'bitcoin'));
+                }else{
+                    this.coins.push(new Euro(this, this.scene, 'euro'));
+                }
+            }
+        }
+    }
+
+    private checkVoid(interval: number) : void
+    {
+        this.balls.forEach(ball => {
+            ball.checkVoid(interval);
+        })
+
+        this.coins.forEach(coin => {
+            coin.checkVoid(interval);
+        })
+    }
+
+    private checkCollision(interval: number) : void
+    {
+        this.balls.forEach(ball => {
+            ball.checkCollision(interval);
+        });
+    }
+
+    private checkScore(interval: number) : void
+    {
+        if(this.scoreCounter.score > this.maxCoins * 5){
+            this.maxCoins++;
+        }else{
+            if(this.maxCoins <= 1){
+                this.maxCoins = 1;
+            }else{
+                this.maxCoins--;
+            }
+        }     
+
+        if(this.scoreCounter.score >= 420 && this.gameover != true){
+            this.gameover = true;
+            window.location.replace("congratulations.html");
+        }   
+    }
+
+    private garbageCollect(interval: number) : void
+    {
+        this.balls.forEach(ball => {
+            if(ball.state == "dead"){
+                if(ball.html.parentNode != null){
+                    ball.html.parentNode.removeChild(ball.html);
+                    this.balls.splice(this.balls.indexOf(ball), 1);
+                }
+            }
+        })
+
+        this.coins.forEach(coin => {
+            if(coin.state == "dead"){
+                if(coin.html.parentNode != null){
+                    coin.html.parentNode.removeChild(coin.html);
+                    this.coins.splice(this.coins.indexOf(coin), 1);
+                }
+            }
+        })
+    }
 }

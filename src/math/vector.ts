@@ -148,5 +148,12 @@ class Vector {
     {
         return new Vector(this._x * -1, this._y);
     }
+
+    public pythagoras(input: Vector): Vector
+    {
+        let dx = input.x() - this._x;
+        let dy = input.y() - this._y;
+        return new Vector(dx, dy);
+    }
     
 }

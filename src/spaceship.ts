@@ -42,10 +42,10 @@ class Spaceship
         let old_x = this.position.x();
         let old_y = this.position.y();
         
-        if(currentMovement.right == true && (spaceship.offsetLeft + 80) <= window.windowWidth - 5){
-            this.position = new Vector(old_x + 7.5, old_y);
+        if(currentMovement.right == true && (spaceship.offsetLeft + 80) <= window.windowWidth - 22.5){
+            this.position = new Vector(old_x + 22.5, old_y);
         }else if(currentMovement.left == true && spaceship.offsetLeft >= 5){
-            this.position = new Vector(old_x - 7.5, old_y);
+            this.position = new Vector(old_x - 22.5, old_y);
         }
     }
 
@@ -64,8 +64,6 @@ class Spaceship
 
     public shoot(interval: number) : void
     {
-        const currentMovement = this._keyboardListener.keyevents;
-
         if(this._shootTimer > 0){
             this._shootTimer -= 1;
         }
@@ -74,10 +72,10 @@ class Spaceship
             }else{
                 this._canShoot = false;
             }
-            if(currentMovement.space == true && this._canShoot == true){
+            if(this._game.mouse.buttonDown == true && this._canShoot == true){
                 this._shootTimer = 12;
                 this._canShoot = false;
-                this._game.balls.push(new Ball(this._game, this._game.scene, 'ball', new Vector(this.position.x(), this.position.y())));
+                this._game.balls.push(new Ball(this._game, this._game.scene, 'ball', new Vector(this.position.x() + (this.size / 2), this.position.y())));
             }
     }
 }

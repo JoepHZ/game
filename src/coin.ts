@@ -1,32 +1,32 @@
-/**
- * This class represents a basic circular moving shape.
- * 
- * @author BugSlayer
- */
-class Ball 
+class Coin
 {
-    private name : String;
+    name : String;
     html : HTMLElement;
     size : number;
-    private _game: Game;
+    game: Game;
     position : Vector;
+    movingX : number;
+    movingY : number;
+    score : number;
     state : String = "alive";
 
     /**
      * @param scene The HTMLElement that representats the scene of the game
      */
-    constructor(game: Game, scene: HTMLElement, name : string, position : Vector)
+    constructor(game: Game, scene: HTMLElement, name : string)
     {
         this.html = document.createElement("div");
         this.html.id = name;
-        this.html.className = "ball";
+        this.html.className = name;
         scene.appendChild(this.html);
-        this.position = position;
-        this._game = game;
+        this.game = game;
+        this.position = new Vector(Math.floor(Math.random() * this.game.window.windowWidth - 128) + 50, 1);
+        this.movingX = Math.floor(Math.random() * (10 - -10 + 1)) + -10; // -10 - 10
+        this.movingY = Math.floor(Math.random() * (7 - 5 + 1)) + 5; // 2- 10
     }
 
     /**
-     * Let the ball move over the specified interval
+     * Let the coin move over the specified interval
      * 
      * @param interval the time interval to move over
      */
@@ -34,11 +34,11 @@ class Ball
     {
         let old_x = this.position.x();
         let old_y = this.position.y();
-        this.position = new Vector(old_x, old_y - 20);
+        this.position = new Vector(old_x + this.movingX, old_y + this.movingY);
     }
 
     /**
-     * Render the ball on the correct position on the screen
+     * Render the coin on the correct position on the screen
      * 
      * @param interval the time interval to move over
      */
@@ -46,30 +46,17 @@ class Ball
     {
         let rect = this.html.getBoundingClientRect();
         this.size = rect.width;
-        this.html.style.left = "" + (this.position.x() - (this.size / 2)) + 'px';
+        this.html.style.left = "" + this.position.x() + 'px';
         this.html.style.top = "" + this.position.y() + 'px';
     }
 
     public checkVoid(interval: number) : void
     {
-        const window = this._game.window;
+        const coin = this.html;
+        const window = this.game.window;
         if(this.html.offsetTop < 0 || this.html.offsetLeft < 0 || this.html.offsetLeft + this.html.offsetWidth > window.windowWidth || this.html.offsetTop + this.html.offsetHeight > window.windowHeight){
             this.state = "dead";
         }
-    }
-
-    public checkCollision(interval: number) : void
-    {
-        this._game.coins.forEach(coin => {
-            if(true){
-                //console.log(this.position.pythagoras(coin.position).x);
-                if(this.position.pythagoras(coin.position).size() < (this.size/2 + coin.size/2)) {
-                    this.state = "dead";
-                    coin.state = "dead";
-                    this._game.scoreCounter.score += coin.score;
-                }
-            }       
-        });
     }
 
     public getSize() : number
