@@ -1,2 +1,10 @@
-# BugSlayer's Game engine (BGE)
-typescript demo of a physics simulation game... the beginning
+# Bitcoin VS Euro
+It's just a game.
+
+# Controls:
+Left arrow: Move to the left
+Right arrow: Move to the right
+Left click: Shoot a ball
+
+# How to win
+Get a score of 420 points.
